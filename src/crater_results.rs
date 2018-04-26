@@ -5,10 +5,19 @@ use std::collections::HashMap;
 
 static REPORTS_BASE: &'static str = "https://cargobomb-reports.s3.amazonaws.com";
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub enum Crate {
     Registry { name: String, version: String },
     GitHub { org: String, name: String },
+}
+
+impl Crate {
+    pub fn name(&self) -> String {
+        match *self {
+            Crate::Registry { ref name, .. } => name.clone(),
+            Crate::GitHub { ref org, ref name } => format!("{}/{}", org, name),
+        }
+    }
 }
 
 #[derive(Deserialize)]
