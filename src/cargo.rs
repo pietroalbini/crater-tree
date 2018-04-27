@@ -23,9 +23,7 @@ fn generate_dummy_project(krate: &Crate) -> Result<PathBuf> {
 
     // Generate dependencies
     let deps = match *krate {
-        Crate::Registry { ref name, .. } => {
-            format!("{} = \"*\"\n", name)
-        },
+        Crate::Registry { ref name, .. } => format!("{} = \"*\"\n", name),
         Crate::GitHub { .. } => unreachable!(),
     };
 
@@ -38,13 +36,14 @@ fn generate_dummy_project(krate: &Crate) -> Result<PathBuf> {
 }
 
 pub fn get_metadata(krate: &Crate) -> Result<Metadata> {
-    let path = generate_dummy_project(&krate)
-        .context("failed to generate dummy project")?;
+    let path = generate_dummy_project(&krate).context("failed to generate dummy project")?;
 
     let metadata = cargo_metadata::metadata_deps(
-        Some(&path.join(format!("dummy-{}", krate.name())).join("Cargo.toml")),
-        true
-    ).map_err(::failure::SyncFailure::new).context("failed to collect metadata")?;
+        Some(&path.join(format!("dummy-{}", krate.name()))
+            .join("Cargo.toml")),
+        true,
+    ).map_err(::failure::SyncFailure::new)
+        .context("failed to collect metadata")?;
 
     fs::remove_dir_all(&path).context("failed to remove dummy project")?;
     Ok(metadata)

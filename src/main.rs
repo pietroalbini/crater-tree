@@ -34,7 +34,8 @@ fn run() -> Result<()> {
 
     println!("Collecting crates metadata...");
     let graph = Mutex::new(graph::DependencyGraph::new());
-    crates.par_iter()
+    crates
+        .par_iter()
         .map(|krate| -> Result<_> {
             let metadata = cargo::get_metadata(krate)?;
             if let Some(ref resolve) = metadata.resolve {

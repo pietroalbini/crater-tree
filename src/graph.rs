@@ -44,14 +44,16 @@ impl DependencyGraph {
 
             for dep in &node.dependencies {
                 let dep_name = dep.split(' ').next().unwrap();
-                self.graph.add_edge(self.crates[name], self.crates[dep_name], ());
+                self.graph
+                    .add_edge(self.crates[name], self.crates[dep_name], ());
             }
         }
     }
 
     pub fn display(&self) {
         // Recalculate the list of regressed crates
-        let regressed = self.graph.neighbors_directed(self.root, Direction::Outgoing)
+        let regressed = self.graph
+            .neighbors_directed(self.root, Direction::Outgoing)
             .map(|node| self.graph.node_weight(node).unwrap().as_str())
             .collect::<Vec<_>>();
 
@@ -61,7 +63,13 @@ impl DependencyGraph {
         }
     }
 
-    fn display_node<'a>(&'a self, node: NodeIndex, regressed: &[&'a str], shown: &mut HashSet<&'a str>, depth: usize) {
+    fn display_node<'a>(
+        &'a self,
+        node: NodeIndex,
+        regressed: &[&'a str],
+        shown: &mut HashSet<&'a str>,
+        depth: usize,
+    ) {
         let mut depth = depth;
         let name = self.graph.node_weight(node).unwrap();
 
