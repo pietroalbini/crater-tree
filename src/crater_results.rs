@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+use failure::Fail;
 use prelude::*;
 use reqwest;
 use serde::de::DeserializeOwned;
@@ -77,7 +78,7 @@ fn load_file<T: DeserializeOwned>(ex: &str, file: &'static str) -> Result<T> {
             f.seek(SeekFrom::Start(0)).context(file)?;
             serde_json::from_reader(f).context(file)?
         }
-        Err(e) => return Err(e.into()),
+        Err(e) => Err(e.context(file))?
     };
     Ok(res)
 }
