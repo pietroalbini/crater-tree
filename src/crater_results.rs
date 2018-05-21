@@ -21,7 +21,10 @@
 use prelude::*;
 use reqwest;
 use serde::de::DeserializeOwned;
+use serde_json;
 use std::collections::HashMap;
+use std::fs::{create_dir_all, OpenOptions};
+use std::io::{ErrorKind, Seek, SeekFrom};
 
 static REPORTS_BASE: &'static str = "https://cargobomb-reports.s3.amazonaws.com";
 
@@ -56,9 +59,27 @@ struct CrateResult {
     res: String,
 }
 
-fn load_file<T: DeserializeOwned>(ex: &str, file: &str) -> Result<T> {
-    let url = format!("{}/{}/{}", REPORTS_BASE, ex, file);
-    Ok(reqwest::get(&url)?.json()?)
+fn load_file<T: DeserializeOwned>(ex: &str, file: &'static str) -> Result<T> {
+    let directory = format!("cache/{}", ex);
+    create_dir_all(&directory).context("creating cache directory")?;
+    let path = format!("{}/{}", directory, file);
+    let res = match OpenOptions::new().read(true).open(&path) {
+        Ok(f) => serde_json::from_reader(f).context(file)?,
+        Err(ref e) if e.kind() == ErrorKind::NotFound => {
+            let url = format!("{}/{}/{}", REPORTS_BASE, ex, file);
+            let mut f = OpenOptions::new()
+                .create_new(true)
+                .write(true)
+                .read(true)
+                .open(&path)
+                .context(file)?;
+            reqwest::get(&url)?.copy_to(&mut f).context(file)?;
+            f.seek(SeekFrom::Start(0)).context(file)?;
+            serde_json::from_reader(f).context(file)?
+        }
+        Err(e) => return Err(e.into()),
+    };
+    Ok(res)
 }
 
 pub fn load_regressed(ex: &str) -> Result<Vec<Crate>> {

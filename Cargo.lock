@@ -120,6 +120,7 @@ dependencies = [
  "reqwest 0.8.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.43 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.43 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.16 (registry+https://github.com/rust-lang/crates.io-index)",
  "tempdir 0.3.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
