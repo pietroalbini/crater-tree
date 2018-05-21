@@ -14,8 +14,8 @@ To use the tool, you simply need to get the experiment name (for example
 $ cargo run --release -- EXPERIMENT_NAME
 ```
 
-You can save each experiment's `config.json` and `results.json` in a
-subdirectory with its name to save download time.
+The experiments' `config.json` and `results.json` will be saved in a `cache`
+subdirectory to save download time in later runs.
 
 The tool is not optimized in any way, and will take some time to output the
 graph.
