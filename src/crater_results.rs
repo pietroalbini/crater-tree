@@ -21,7 +21,9 @@
 use prelude::*;
 use reqwest;
 use serde::de::DeserializeOwned;
+use serde_json;
 use std::collections::HashMap;
+use std::fs::File;
 
 static REPORTS_BASE: &'static str = "https://cargobomb-reports.s3.amazonaws.com";
 
@@ -57,8 +59,14 @@ struct CrateResult {
 }
 
 fn load_file<T: DeserializeOwned>(ex: &str, file: &str) -> Result<T> {
-    let url = format!("{}/{}/{}", REPORTS_BASE, ex, file);
-    Ok(reqwest::get(&url)?.json()?)
+    let path = format!("{}/{}", ex, file);
+    Ok(match File::open(&path) {
+        Ok(f) => serde_json::from_reader(f)?,
+        Err(_e) => {
+            let url = format!("{}/{}", REPORTS_BASE, path);
+            reqwest::get(&url)?.json()?
+        }
+    })
 }
 
 pub fn load_regressed(ex: &str) -> Result<Vec<Crate>> {
