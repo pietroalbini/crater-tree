@@ -40,6 +40,13 @@ use rayon::prelude::*;
 use std::env;
 use std::sync::Mutex;
 
+fn print_error(error: &failure::Error) {
+    eprintln!("error: {}", error);
+    for cause in error.causes().skip(1) {
+        eprintln!("  caused by: {}", cause);
+    }
+}
+
 fn run() -> Result<()> {
     // Simple argument parsing
     let args = env::args().skip(1).collect::<Vec<_>>();
@@ -57,10 +64,11 @@ fn run() -> Result<()> {
     let graph = Mutex::new(graph::DependencyGraph::new());
     crates
         .par_iter()
-        .map(|krate| -> Result<_> {
-            let metadata = cargo::get_metadata(krate)?;
-            if let Some(ref resolve) = metadata.resolve {
-                graph.lock().unwrap().load_from_metadata(resolve);
+        .map(|krate| {
+            match cargo::get_metadata(krate).map(|m| m.resolve) {
+                Ok(Some(ref resolve)) => graph.lock().unwrap().load_from_metadata(resolve),
+                Ok(None) => {}
+                Err(err) => print_error(&err),
             }
 
             Ok(())
@@ -75,10 +83,7 @@ fn run() -> Result<()> {
 
 fn main() {
     if let Err(error) = run() {
-        eprintln!("error: {}", error);
-        for cause in error.causes().skip(1) {
-            eprintln!("  caused by: {}", cause);
-        }
+        print_error(&error);
         ::std::process::exit(1);
     }
 }
