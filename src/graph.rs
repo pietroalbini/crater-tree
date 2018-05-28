@@ -98,7 +98,7 @@ impl DependencyGraph {
         }
 
         if regressed.contains(&name.as_str()) {
-            let tab = (0..depth).map(|_| "  ").collect::<String>();
+            let tab = (0..depth).map(|_| "| ").collect::<String>();
             println!("{}{}", tab, name);
 
             depth += 1;
