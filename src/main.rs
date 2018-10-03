@@ -42,7 +42,7 @@ use std::sync::Mutex;
 
 fn print_error(error: &failure::Error) {
     eprintln!("error: {}", error);
-    for cause in error.causes().skip(1) {
+    for cause in error.iter_chain().skip(1) {
         eprintln!("  caused by: {}", cause);
     }
 }
