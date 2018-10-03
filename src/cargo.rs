@@ -21,8 +21,8 @@
 use cargo_metadata::{self, Metadata};
 use crater_results::Crate;
 use prelude::*;
-use std::fs::OpenOptions;
 use std::fs;
+use std::fs::OpenOptions;
 use std::io::Write;
 use std::path::PathBuf;
 use std::process::Command;
@@ -59,11 +59,14 @@ pub fn get_metadata(krate: &Crate) -> Result<Metadata> {
     let path = generate_dummy_project(&krate).context("failed to generate dummy project")?;
 
     let metadata = cargo_metadata::metadata_deps(
-        Some(&path.join(format!("dummy-{}", krate.name()))
-            .join("Cargo.toml")),
+        Some(
+            &path
+                .join(format!("dummy-{}", krate.name()))
+                .join("Cargo.toml"),
+        ),
         true,
     ).map_err(::failure::SyncFailure::new)
-        .context("failed to collect metadata")?;
+    .context("failed to collect metadata")?;
 
     fs::remove_dir_all(&path).context("failed to remove dummy project")?;
     Ok(metadata)

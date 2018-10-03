@@ -30,8 +30,8 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate tempdir;
 
-mod crater_results;
 mod cargo;
+mod crater_results;
 mod graph;
 mod prelude;
 
@@ -72,8 +72,7 @@ fn run() -> Result<()> {
             }
 
             Ok(())
-        })
-        .collect::<Result<()>>()?;
+        }).collect::<Result<()>>()?;
     let graph = graph.into_inner().unwrap();
 
     graph.display();

@@ -19,8 +19,8 @@
 // SOFTWARE.
 
 use cargo_metadata::Resolve;
-use petgraph::Direction;
 use petgraph::graph::{DiGraph, NodeIndex};
+use petgraph::Direction;
 use std::collections::{HashMap, HashSet};
 
 pub struct DependencyGraph {
@@ -72,7 +72,8 @@ impl DependencyGraph {
 
     pub fn display(&self) {
         // Recalculate the list of regressed crates
-        let regressed = self.graph
+        let regressed = self
+            .graph
             .neighbors_directed(self.root, Direction::Outgoing)
             .map(|node| self.graph.node_weight(node).unwrap().as_str())
             .collect::<Vec<_>>();

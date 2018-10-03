@@ -78,7 +78,7 @@ fn load_file<T: DeserializeOwned>(ex: &str, file: &'static str) -> Result<T> {
             f.seek(SeekFrom::Start(0)).context(file)?;
             serde_json::from_reader(f).context(file)?
         }
-        Err(e) => Err(e.context(file))?
+        Err(e) => Err(e.context(file))?,
     };
     Ok(res)
 }
@@ -89,7 +89,7 @@ pub fn load_regressed(ex: &str) -> Result<Vec<Crate>> {
 
     // Create an HashMap to quickly lookup structured data from the results
     let mut crates = HashMap::new();
-    for krate in config.crates.into_iter() {
+    for krate in config.crates {
         let name = if let Crate::Registry {
             ref name,
             ref version,
