@@ -107,7 +107,7 @@ pub fn load_regressed(ex: &str) -> Result<Vec<Crate>> {
     let mut regressed = Vec::new();
     let results: Results = load_file(ex, "results.json")?;
     for result in &results.crates {
-        if result.res == "Regressed" {
+        if result.res == "regressed" {
             if let Some(krate) = crates.remove(&result.name) {
                 regressed.push(krate);
             }
