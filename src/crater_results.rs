@@ -27,7 +27,7 @@ use std::collections::HashMap;
 use std::fs::{create_dir_all, OpenOptions};
 use std::io::{ErrorKind, Seek, SeekFrom};
 
-static REPORTS_BASE: &'static str = "https://cargobomb-reports.s3.amazonaws.com";
+static REPORTS_BASE: &'static str = "https://crater-reports.s3.amazonaws.com";
 
 #[derive(Clone, Deserialize)]
 pub enum Crate {
