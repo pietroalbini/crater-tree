@@ -72,7 +72,8 @@ fn run() -> Result<()> {
             }
 
             Ok(())
-        }).collect::<Result<()>>()?;
+        })
+        .collect::<Result<()>>()?;
     let graph = graph.into_inner().unwrap();
 
     graph.display();

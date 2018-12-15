@@ -65,7 +65,8 @@ pub fn get_metadata(krate: &Crate) -> Result<Metadata> {
                 .join("Cargo.toml"),
         ),
         true,
-    ).map_err(::failure::SyncFailure::new)
+    )
+    .map_err(::failure::SyncFailure::new)
     .context("failed to collect metadata")?;
 
     fs::remove_dir_all(&path).context("failed to remove dummy project")?;
