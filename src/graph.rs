@@ -44,7 +44,7 @@ impl DependencyGraph {
     pub fn load_from_metadata(&mut self, resolve: &Resolve) {
         // First load all the crates
         for node in &resolve.nodes {
-            let name = node.id.split(' ').next().unwrap().to_string();
+            let name = node.id.repr.split(' ').next().unwrap().to_string();
             if self.crates.contains_key(&name) {
                 continue;
             }
@@ -60,10 +60,10 @@ impl DependencyGraph {
 
         // Then connect all the dependencies
         for node in &resolve.nodes {
-            let name = node.id.split(' ').next().unwrap();
+            let name = node.id.repr.split(' ').next().unwrap();
 
             for dep in &node.dependencies {
-                let dep_name = dep.split(' ').next().unwrap();
+                let dep_name = dep.repr.split(' ').next().unwrap();
                 self.graph
                     .add_edge(self.crates[name], self.crates[dep_name], ());
             }
